@@ -3,6 +3,7 @@ import os
 from flask import Blueprint, render_template, abort,Flask, request, session, g, redirect, url_for,flash,jsonify,request 
 from datetime import datetime
 import MySQLdb as mysql
+from backend import syn_sign,syn_student
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -14,7 +15,15 @@ def Checkin():
         g.cursor.execute('select group_id,group_name from lab_group order by group_id')
         entries = [dict(id=row[0], name=row[1]) for row in g.cursor.fetchall()]
         return render_template('Checkin.html',entries=entries)
+@checkin_related.route('/syn_sign',methods=['POST'])
+def Checkin_sys_sign():
+    syn_sign()
+    return jsonify({'success':True})
 
+@checkin_related.route('/syn_student',methods=['POST'])
+def Checkin_sys_student():
+    syn_student()
+    return jsonify({'success':True})
     
 @checkin_related.route('/stu_list',methods=['POST','GET'])
 def Checkin_Stu_List():

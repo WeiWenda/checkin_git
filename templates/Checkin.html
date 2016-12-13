@@ -26,6 +26,17 @@
             <div class="navbar-header">
               <a class="navbar-brand"><b>天地网实验室</b><small>考勤系统</small></a>
             </div>
+            <div class="navbar-custom-menu">
+              <ul class="nav navbar-nav">
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">后台同步 <span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                  <li><a class="clickable" claction='/syn_student'>同步新同学</a></li>
+                    <li><a class="clickable" claction='/syn_sign'>同步打卡数据</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
           </div>
           <!-- /.container-fluid -->
         </nav>
@@ -37,21 +48,21 @@
             <div class="col-md-9">
              <div class="box box-success">
               <div class="box-header with-border">
-              <i class="fa fa-bar-chart-o"></i>
-              <h3 class="box-title idx">各组统计结果</h3>
-              <div class="box-tools pull-right">
-                基本范围: 
-                <div class="btn-group" id="basicrange_0" data-toggle="btn-toggle">
-                  <button type="button" class="btn btn-default btn-xs" data-toggle="30">近1月</button>
-                  <button type="button" class="btn btn-default btn-xs" data-toggle="15">近2周</button>
-                  <button type="button" class="btn btn-default btn-xs" data-toggle="7">近1周</button>
-                </div>
-                指定范围:
-                <div class="btn-group" id="daterange_0">
-                  <button type="button" class="btn btn-default btn-xs dateranger dr-s" id="date_start_0"></button>
-                  <button type="button" class="btn btn-default btn-xs dateranger dr-e" id="date_end_0"></button>
-                  <button type="button" class="btn btn-primary btn-xs" id="daterange_submit_0">查询</button>
-                </div>
+                <i class="fa fa-bar-chart-o"></i>
+                <h3 class="box-title idx">各组统计结果</h3>
+                <div class="box-tools pull-right">
+                  基本范围: 
+                  <div class="btn-group" id="basicrange_0" data-toggle="btn-toggle">
+                    <button type="button" class="btn btn-default btn-xs" data-toggle="30">近1月</button>
+                    <button type="button" class="btn btn-default btn-xs" data-toggle="15">近2周</button>
+                    <button type="button" class="btn btn-default btn-xs" data-toggle="7">近1周</button>
+                  </div>
+                  指定范围:
+                  <div class="btn-group" id="daterange_0">
+                    <button type="button" class="btn btn-default btn-xs dateranger dr-s" id="date_start_0"></button>
+                    <button type="button" class="btn btn-default btn-xs dateranger dr-e" id="date_end_0"></button>
+                    <button type="button" class="btn btn-primary btn-xs" id="daterange_submit_0">查询</button>
+                  </div>
                   <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                   </button>
                   <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -134,64 +145,64 @@
  * chart.draw(ds,de); 用于根据指定的起止日期查询数据更新图表
  * @author hehuan@mail.xjtu.edu.cn
  */
-var chart_sys_uv_day_stu = {
-    myChart: null,
-    option: {
-        title : {
-            text: '打卡次数平均数统计',
-            subtext: '区间'
-        },
-        tooltip : {
-            trigger: 'axis'
-        },
-        legend: {
-            data:['打卡次数']
-        },
-        toolbox: {
-            show : true,
-            feature : {
-                dataView : {show: true, readOnly: false},
-                magicType : {show: true, type: ['line', 'bar']},
-                restore : {show: true},
-                saveAsImage : {show: true}
-            }
-        },
-        xAxis : [
-            {
-                type : 'category',
-                axisLabel :{interval:0}
-            }
-        ],
-        yAxis : [
-            {
-                type : 'value'
-            }
-        ],
-        series : [
-            {
-                name:'打卡次数', 
-                type:'bar',
-                markPoint : {
-                    data : [
-                        {type : 'max', name: '最大值'},
-                        {type : 'min', name: '最小值'}
-                    ]
-                },
-                markLine : {
-                    data : [
-                        {type : 'average', name: '平均值'}
-                    ]
-                }
-            }
-        ]
+ var chart_sys_uv_day_stu = {
+  myChart: null,
+  option: {
+    title : {
+      text: '打卡次数平均数统计',
+      subtext: '区间'
     },
+    tooltip : {
+      trigger: 'axis'
+    },
+    legend: {
+      data:['打卡次数']
+    },
+    toolbox: {
+      show : true,
+      feature : {
+        dataView : {show: true, readOnly: false},
+        magicType : {show: true, type: ['line', 'bar']},
+        restore : {show: true},
+        saveAsImage : {show: true}
+      }
+    },
+    xAxis : [
+    {
+      type : 'category',
+      axisLabel :{interval:0}
+    }
+    ],
+    yAxis : [
+    {
+      type : 'value'
+    }
+    ],
+    series : [
+    {
+      name:'打卡次数', 
+      type:'bar',
+      markPoint : {
+        data : [
+        {type : 'max', name: '最大值'},
+        {type : 'min', name: '最小值'}
+        ]
+      },
+      markLine : {
+        data : [
+        {type : 'average', name: '平均值'}
+        ]
+      }
+    }
+    ]
+  },
     /**
      * Init the chart with a div id
      * @param {string} divid The id of a div tag for chart
      * @return {void} returns nothing
      */
-    init: function(divid){
-        this.myChart = echarts.init(document.getElementById(divid), 'shine');
+     init: function(divid){
+      this.myChart = echarts.init(document.getElementById(divid), 'shine');
     },
 
     /**
@@ -200,82 +211,94 @@ var chart_sys_uv_day_stu = {
      * @param {string} de The date of end, YYYY-mm-dd
      * @returns {void} returns nothing
      */
-    draw: function(ds, de,url){
-        $.post(
-            url,
-            {'ds':ds,'de':de},
-            function(data){
-              console.log(data.row.length)
-                if(data.row.length>12)
-                  chart_sys_uv_day_stu.option.xAxis[0].axisLabel.rotate=-90;
-                else
-                  chart_sys_uv_day_stu.option.xAxis[0].axisLabel.rotate=0;
+     draw: function(ds, de,url){
+      $.post(
+        url,
+        {'ds':ds,'de':de},
+        function(data){
+          // console.log(data.row.length)
+          if(data.row.length>12)
+            chart_sys_uv_day_stu.option.xAxis[0].axisLabel.rotate=-90;
+          else
+            chart_sys_uv_day_stu.option.xAxis[0].axisLabel.rotate=0;
 
-                chart_sys_uv_day_stu.option.xAxis[0].data = data.row;
-                chart_sys_uv_day_stu.option.series[0].data = data.col;
-                chart_sys_uv_day_stu.option.title.subtext ="区间: "+ ds + " - " + de;
-                chart_sys_uv_day_stu.myChart.setOption(chart_sys_uv_day_stu.option);
-            },'json'
+          chart_sys_uv_day_stu.option.xAxis[0].data = data.row;
+          chart_sys_uv_day_stu.option.series[0].data = data.col;
+          chart_sys_uv_day_stu.option.title.subtext ="区间: "+ ds + " - " + de;
+          chart_sys_uv_day_stu.myChart.setOption(chart_sys_uv_day_stu.option);
+        },'json'
         );    
     }
-};
+  };
 </script>
 <script>
  $(function () {
-    var count_url='/count_detail';
-      // Init the Datepicker
-    $('.dateranger')
-        .datepicker({language: 'zh-CN',format:'yyyy-mm-dd',autoClose:true})
-        .on('changeDate',function(ev){
-            ev.currentTarget.innerHTML = ev.format();
-    });
-    $('#basicrange_0 .btn').on('click', function(ev){
-        chart_sys_uv_day_stu.draw(
-            moment().subtract($(this).data().toggle,'days').format('Y-MM-DD'), 
-            moment().format('Y-MM-DD'),count_url);
-    });
-    $('#daterange_submit_0').on('click', function(evt){
-        chart_sys_uv_day_stu.draw($('#date_start_0').html(), $("#date_end_0").html(),count_url);
-          $("#calendar").fullCalendar('gotoDate', moment($('#date_start_0').html() ));
-    });
-    // Init the Date Rangers
-  $('.dr-s').html(moment().subtract(7,'days').format('Y-MM-DD'));
-  $('.dr-e').html(moment().format('Y-MM-DD'));
-    chart_sys_uv_day_stu.init('chart_sys_uv_day_0');
-  chart_sys_uv_day_stu.draw($('#date_start_0').html(), $("#date_end_0").html(),count_url);
-  $(".group").click(function () {
-    $(".stulist_container").show();
-    var group_name=$(this).text();
-    $(".idx").text(group_name);
-    chart_sys_uv_day_stu.option.title.text="打卡次数总数统计";
-    count_url='/count_group?id='+$(this).attr('groupid');
-    chart_sys_uv_day_stu.draw($('#date_start_0').html(), $("#date_end_0").html(),count_url);
-    $.post('/stu_list',data={id:$(this).attr('groupid')},function(data){
-      $(".students").empty();
-      $.each(data, function(k, v)  
-      {  
-        $(".students").append( 
 
-          $("<div />").addClass("external-event").addClass("student").addClass(v['color']).attr('stu_id',v['id']).text(v['name'])
-          );
-
+    $(".clickable").click(function(){
+      console.log('yes');
+      $.post($(this).attr('claction'),function(data){
+        if(data.success==true)
+          alert("同步成功！");
+        else
+          alert("发生错误！");
       });
-      $(".student").click(function (){
-            console.log('here');
-            var student_name=$(this).text();
-            $(".idx").text(student_name);
-            chart_sys_uv_day_stu.option.title.text="打卡次数每日统计";
-            count_url='/count_stu?id='+$(this).attr('stu_id');
-            chart_sys_uv_day_stu.draw($('#date_start_0').html(), $("#date_end_0").html(),count_url);
-        $(".calendarContainer").show();
-        $('#calendar').fullCalendar( 'destroy' );
-         $('#calendar').fullCalendar({
-          header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'agendaWeek,listWeek'
-          },
-          defaultView:'agendaWeek',
+
+    });
+
+  var count_url='/count_detail';
+      // Init the Datepicker
+      $('.dateranger')
+      .datepicker({language: 'zh-CN',format:'yyyy-mm-dd',autoClose:true})
+      .on('changeDate',function(ev){
+        ev.currentTarget.innerHTML = ev.format();
+      });
+      $('#basicrange_0 .btn').on('click', function(ev){
+        chart_sys_uv_day_stu.draw(
+          moment().subtract($(this).data().toggle,'days').format('Y-MM-DD'), 
+          moment().format('Y-MM-DD'),count_url);
+      });
+      $('#daterange_submit_0').on('click', function(evt){
+        chart_sys_uv_day_stu.draw($('#date_start_0').html(), $("#date_end_0").html(),count_url);
+        $("#calendar").fullCalendar('gotoDate', moment($('#date_start_0').html() ));
+      });
+    // Init the Date Rangers
+    $('.dr-s').html(moment().subtract(7,'days').format('Y-MM-DD'));
+    $('.dr-e').html(moment().format('Y-MM-DD'));
+    chart_sys_uv_day_stu.init('chart_sys_uv_day_0');
+    chart_sys_uv_day_stu.draw($('#date_start_0').html(), $("#date_end_0").html(),count_url);
+    $(".group").click(function () {
+      $(".stulist_container").show();
+      var group_name=$(this).text();
+      $(".idx").text(group_name);
+      chart_sys_uv_day_stu.option.title.text="打卡次数总数统计";
+      count_url='/count_group?id='+$(this).attr('groupid');
+      chart_sys_uv_day_stu.draw($('#date_start_0').html(), $("#date_end_0").html(),count_url);
+      $.post('/stu_list',data={id:$(this).attr('groupid')},function(data){
+        $(".students").empty();
+        $.each(data, function(k, v)  
+        {  
+          $(".students").append( 
+
+            $("<div />").addClass("external-event").addClass("student").addClass(v['color']).attr('stu_id',v['id']).text(v['name'])
+            );
+
+        });
+        $(".student").click(function (){
+          // console.log('here');
+          var student_name=$(this).text();
+          $(".idx").text(student_name);
+          chart_sys_uv_day_stu.option.title.text="打卡次数每日统计";
+          count_url='/count_stu?id='+$(this).attr('stu_id');
+          chart_sys_uv_day_stu.draw($('#date_start_0').html(), $("#date_end_0").html(),count_url);
+          $(".calendarContainer").show();
+          $('#calendar').fullCalendar( 'destroy' );
+          $('#calendar').fullCalendar({
+            header: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'agendaWeek,listWeek'
+            },
+            defaultView:'agendaWeek',
           businessHours:[ // specify an array instead
           {
             dow: [ 1, 2, 3,4,5 ], // Monday, Tuesday, Wednesday
@@ -311,7 +334,7 @@ var chart_sys_uv_day_stu = {
       });//click
     });//post
   });//click
-   
+
   });
 </script>
 </body>

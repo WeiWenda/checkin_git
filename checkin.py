@@ -5,6 +5,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash,jsonify, send_from_directory
 import datetime
 from checkin_related import checkin_related
+from backend import syn_sign,syn_student
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
