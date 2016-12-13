@@ -36,6 +36,10 @@ def before_request():
     g.db = connect_db()
     g.cursor = get_cursor()
 
+@app.route('/favicon.ico')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
+
 @app.teardown_request
 def teardown_request(exception):
     db = getattr(g, 'db', None)
