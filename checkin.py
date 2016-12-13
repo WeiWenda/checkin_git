@@ -12,10 +12,10 @@ sys.setdefaultencoding('utf8')
 # configuration
 DATABASE = 'checkin'
 DEBUG = True
-HOST='202.117.16.35'
+HOST='202.117.16.247'
 SECRET_KEY = 'development key'
 USERNAME = 'vivid'
-PASSWORD = 'root'
+PASSWORD = 'xjtudlc_PL<KI*()_'
 
 app = Flask(__name__,static_folder = 'static')
 app.config.from_object(__name__)
