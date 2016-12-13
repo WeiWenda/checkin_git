@@ -21,7 +21,7 @@ def Checkin_Stu_List():
     groupid=int(request.form['id'])
     g.cursor.execute('select stu_id,stu_name,bg_color from lab_student,lab_grade where group_id = %d  and lab_student.grade_id = lab_grade.grade_id order by lab_student.grade_id '% groupid)
     entries = [dict(id=row[0], name=row[1],color=row[2]) for row in g.cursor.fetchall()]
-    return jsonify(entries=entries)
+    return jsonify(entries)
 
 @checkin_related.route('/stu_detail',methods=['GET','POST'])
 def Checkin_Stu_Detail():
@@ -30,7 +30,7 @@ def Checkin_Stu_Detail():
     stu_id = int(request.args.get('stu_id'))
     g.cursor.execute('select start,color from lab_event where  stu_id = %s and start between %s and %s ',(stu_id,start,end))
     ret = [dict(start=row[0].isoformat(" "),backgroundColor=row[1],borderColor=row[1]) for row in g.cursor.fetchall()]
-    return jsonify(ret=ret)
+    return jsonify(ret)
 
 @checkin_related.route('/count_detail',methods=['GET','POST'])
 def Checkin_Count_Detail():
