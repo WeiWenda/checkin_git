@@ -235,8 +235,8 @@
  $(function () {
 
     $(".clickable").click(function(){
-      console.log('yes');
-      $.post($(this).attr('claction'),function(data){
+      var str = window.prompt("输入后台管理凭证：","password") 
+      $.post($(this).attr('claction'),data={password:str},function(data){
         if(data.success==true)
           alert("同步成功！");
         else

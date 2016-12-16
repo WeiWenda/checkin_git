@@ -17,13 +17,19 @@ def Checkin():
         return render_template('Checkin.html',entries=entries)
 @checkin_related.route('/syn_sign',methods=['POST'])
 def Checkin_sys_sign():
-    syn_sign()
-    return jsonify({'success':True})
+    if(request.form.get('password',"") == 'xueshubu2016'):
+        syn_sign()
+        return jsonify({'success':True})
+    else:
+        return jsonify({'success':False})
 
 @checkin_related.route('/syn_student',methods=['POST'])
 def Checkin_sys_student():
-    syn_student()
-    return jsonify({'success':True})
+    if(request.form.get('password',"") == 'xueshubu2016'):
+        syn_student()
+        return jsonify({'success':True})
+    else:
+        return jsonify({'success':False})
     
 @checkin_related.route('/stu_list',methods=['POST','GET'])
 def Checkin_Stu_List():

@@ -72,17 +72,19 @@ def compute_sign_count(stu_id,signs,db,cursor):
         # print(today)
         # print (dict_sign_date)
 def insert_sign_event(stu_id,max_date,db,cursor):
-    cursor.execute(''' select sign_date,
-            (case when time(sign_date) < '08:30:00' then 1 
-                when time(sign_date) < '11:40:00' and time(sign_date) > '08:30:00' then 2
-                when time(sign_date) < '14:20:00' AND time(sign_date) > '11:40:00' then 1
-                when time(sign_date) < '17:40:00' and time(sign_date) > '14:20:00' then 2
-                when time(sign_date) < '20:00:00' and time(sign_date) > '17:40:00' then 1
-                when time(sign_date) < '21:10:00' and time(sign_date) > '20:00:00' then 2
-                when time(sign_date) > '21:10:00' then 3 else 1
+    cursor.execute(''' select DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE),
+            (case when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '08:30:00' then 1 
+                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '11:40:00' and time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '08:30:00' then 2
+                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '14:20:00' AND time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '11:40:00' then 1
+                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '17:40:00' and time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '14:20:00' then 2
+                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '20:00:00' and time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '17:40:00' then 1
+                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '21:10:00' and time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '20:00:00' then 2
+                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '21:10:00' then 3 else 1
                      end) as sign_type 
-                            from check_in 
-                        where sign_date > "%s" and id_num = %d
+                        from check_in as c,lab_student as s,lab_group as g
+                        where c.sign_date > "%s" and c.id_num = "%d"
+                        and s.stu_id = c.id_num AND
+                            g.group_id = s.group_id 
                         order by sign_date '''%(max_date.isoformat(),stu_id))
     signs = cursor.fetchall()
     last_sign_date = datetime.strptime(max_date.isoformat(),'%Y-%m-%d')
@@ -122,7 +124,12 @@ def syn_sign():
             tmp=max_date+timedelta(days=1)
             max_date=tmp.date()
             
-        cursor.execute('select sign_date from check_in where id_num = "%d" and sign_date> "%s" order by sign_date'%(int(student['id']),max_date.isoformat()))
+        cursor.execute('''select DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)  from check_in as c,lab_student as s,lab_group as g
+            where c.id_num = "%d" and 
+                s.stu_id = c.id_num AND
+                g.group_id = s.group_id and
+                sign_date> "%s" order by sign_date
+            '''%(int(student['id']),max_date.isoformat()))
         signs = [row[0] for row in cursor.fetchall()]
         compute_sign_count(int(student['id']),signs,db,cursor)
         
