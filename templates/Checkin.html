@@ -95,7 +95,7 @@
               <!-- the events -->
               <div id="external-events">
                 {% for entry in entries  %}
-                <div class="external-event bg-green group" groupid="{{ entry.id }}">
+                <div class="external-event bg-green group" style="cursor:pointer" groupid="{{ entry.id }}">
                   {{ entry.name }}
                 </div>
                 {% endfor %}
@@ -279,7 +279,7 @@
         {  
           $(".students").append( 
 
-            $("<div />").addClass("external-event").addClass("student").addClass(v['color']).attr('stu_id',v['id']).text(v['name'])
+            $("<div />").addClass("external-event").addClass("student").addClass(v['color']).css('cursor','pointer').attr('stu_id',v['id']).text(v['name'])
             );
 
         });
