@@ -15,6 +15,8 @@ def Put_Bulk():
     if request.method=='POST':
         print request.form
         data = request.form.get('rs')
+        print type(data)
+        print data
         data = json.loads(data)
         for r in data:
             g.cursor.execute("""

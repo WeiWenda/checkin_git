@@ -22,7 +22,7 @@ def a(date):
     # sql = sql.encode('gbk')
     # sql = sql.encode('utf8')
     cursor.execute(sql) 
-    res = [dict(person_name=row[0],id_num=row[1],node_name=row[2],sign_date=row[3])  for row in cursor]
+    res = [dict(person_name=row[0],id_num=row[1],node_name=row[2],sign_date=row[3].strftime('%Y-%m-%d %H:%M:%S'))  for row in cursor]
     toReturn = dict(rs=res,date=date)
     print "finished!"
     cursor.close() 
@@ -33,6 +33,6 @@ latest = requests.get('http://checkin.9lou.org/get/new').json()
 print latest['date']
 # post_data = a(latest['date'])
 post_data = a('2017-05-01 19:55:36')
-r = requests.post("http://checkin.9lou.org/put/bulk",data=json.dumps(post_data))
+r = requests.post("http://checkin.9lou.org/put/bulk",data=post_data)
 print r
 
