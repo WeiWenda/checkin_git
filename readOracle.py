@@ -2,7 +2,7 @@
 import cx_Oracle
 import requests
 import json
-import os
+import os 
 from backend import syn_sign,syn_student
 #不加本句会出现中文编码问题！！！
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
@@ -24,7 +24,7 @@ def a(date):
     # sql = sql.encode('utf8')
     cursor.execute(sql) 
     res = [dict(person_name=row[0],id_num=row[1],node_name=row[2],sign_date=row[3].strftime('%Y-%m-%d %H:%M:%S'))  for row in cursor]
-    toReturn = dict(rs=json.dumps(res), date=date)
+    toReturn = dict(rs=json.dumps(res), date=date,password='xueshubu2016')
     print "finished!"
     cursor.close() 
     connection.close()

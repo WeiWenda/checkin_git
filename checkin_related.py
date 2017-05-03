@@ -13,19 +13,19 @@ checkin_related = Blueprint("checkin_related", __name__, template_folder="templa
 @checkin_related.route('/put/bulk',methods=['GET','POST'])
 def Put_Bulk():
     if request.method=='POST':
-        print request.form
-        data = request.form.get('rs')
-        print type(data)
-        print data
-        data = json.loads(data)
-        for r in data:
-            g.cursor.execute("""
-                insert into check_in 
-                  (person_name, id_num, node_name, sign_date)
-                  values ("%s","%s","%s","%s")""" % (r['person_name'],r['id_num'],r['node_name'],r['sign_date']))
-        g.db.commit()
-        syn_sign()
-        return "ok!"
+        if(request.form.get('password',"") == 'xueshubu2016'):
+            data = request.form.get('rs')
+            data = json.loads(data)
+            for r in data:
+                g.cursor.execute("""
+                    insert into check_in 
+                      (person_name, id_num, node_name, sign_date)
+                      values ("%s","%s","%s","%s")""" % (r['person_name'],r['id_num'],r['node_name'],r['sign_date']))
+            g.db.commit()
+            syn_sign()
+            return "ok!"
+        else:
+            return "false!"
     else:
         return "404"
 
