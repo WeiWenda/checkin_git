@@ -59,4 +59,4 @@ def teardown_request(exception):
 #     return redirect(url_for('show_entries'))
    
 if __name__ == '__main__':
-	app.run(host='0.0.0.0',port=61213)
+	app.run(host='0.0.0.0',port=51213)
