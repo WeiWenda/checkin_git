@@ -16,6 +16,7 @@ def Put_Bulk():
         print request.form
         data = request.form.get('rs')
         for r in data:
+            r = json.loads(r)
             g.cursor.execute("""
                 insert into check_in 
                   (person_name, id_num, node_name, sign_date)
