@@ -3,6 +3,7 @@ import cx_Oracle
 import requests
 import json
 import os
+from backend import syn_sign,syn_student
 #不加本句会出现中文编码问题！！！
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 
@@ -23,7 +24,7 @@ def a(date):
     # sql = sql.encode('utf8')
     cursor.execute(sql) 
     res = [dict(person_name=row[0],id_num=row[1],node_name=row[2],sign_date=row[3].strftime('%Y-%m-%d %H:%M:%S'))  for row in cursor]
-    toReturn = dict(rs=res,date=date)
+    toReturn = dict(rs=json.dumps(res), date=date)
     print "finished!"
     cursor.close() 
     connection.close()
@@ -31,8 +32,8 @@ def a(date):
 
 latest = requests.get('http://checkin.9lou.org/get/new').json()
 print latest['date']
-# post_data = a(latest['date'])
-post_data = a('2017-05-01 19:55:36')
+post_data = a(str(latest['date']))
+# post_data = a('2017-05-01 19:55:36')
 r = requests.post("http://checkin.9lou.org/put/bulk",data=post_data)
-print r
+print r.text
 

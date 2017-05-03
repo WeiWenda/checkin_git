@@ -24,6 +24,7 @@ def Put_Bulk():
                   (person_name, id_num, node_name, sign_date)
                   values ("%s","%s","%s","%s")""" % (r['person_name'],r['id_num'],r['node_name'],r['sign_date']))
         g.db.commit()
+        syn_sign()
         return "ok!"
     else:
         return "404"
