@@ -30,7 +30,8 @@ def Get_New():
     if request.method=='GET':
         g.cursor.execute('select max(sign_date) from check_in')
         result = g.cursor.fetchone()
-        entries = dict(date=datetime.strptime(result[0].isoformat(),'%Y-%m-%dT%H:%M:%S'))
+        # entries = dict(date=datetime.strptime(result[0].isoformat(),'%Y-%m-%dT%H:%M:%S'))
+        entries = dict(date=result[0].strftime('%Y-%m-%d %H:%M:%S'))
         return jsonify(entries)
     else:
         return "404"
