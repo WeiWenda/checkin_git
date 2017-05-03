@@ -33,6 +33,6 @@ latest = requests.get('http://checkin.9lou.org/get/new').json()
 print latest['date']
 # post_data = a(latest['date'])
 post_data = a('2017-05-01 19:55:36')
-r = requests.post("http://checkin.9lou.org/put/bulk",data=post_data)
+r = requests.post("http://checkin.9lou.org/put/bulk",data=json.dumps(post_data))
 print r
 
