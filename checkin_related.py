@@ -5,9 +5,35 @@ from datetime import datetime
 import MySQLdb as mysql
 from backend import syn_sign,syn_student
 import sys
+import json
 reload(sys)
 sys.setdefaultencoding('utf8')
 checkin_related = Blueprint("checkin_related", __name__, template_folder="templates")
+
+@checkin_related.route('/put/bulk',methods=['GET','POST'])
+def Put_Bulk():
+    if request.method=='POST':
+        data = request.form('data')
+        data_json = json.loads(data)
+        for r in data_json['rs']:
+            g.cursor.execute("""
+                insert into check_in 
+                  (person_name, id_num, node_name, sign_date)
+                  values ("%s","%s","%s","%s")""" % (r['person_name'],r['id_num'],r['node_name'],r['sign_date']))
+        g.db.commit()
+        return "ok!"
+    else:
+        return "404"
+
+@checkin_related.route('/get/new')
+def Get_New():
+    if request.method=='GET':
+        g.cursor.execute('select max(sign_date) from check_in')
+        result = g.cursor.fetchone()
+        entries = dict(date=result[0])
+        return jsonify(entries)
+    else:
+        return "404"
 
 @checkin_related.route('/')
 def Checkin():
@@ -16,7 +42,7 @@ def Checkin():
         entries = [dict(id=row[0], name=row[1]) for row in g.cursor.fetchall()]
         return render_template('Checkin.html',entries=entries)
 @checkin_related.route('/syn_sign',methods=['POST'])
-def Checkin_sys_sign():
+def Checkin_Sys_Sign():
     if(request.form.get('password',"") == 'xueshubu2016'):
         syn_sign()
         return jsonify({'success':True})
@@ -24,7 +50,7 @@ def Checkin_sys_sign():
         return jsonify({'success':False})
 
 @checkin_related.route('/syn_student',methods=['POST'])
-def Checkin_sys_student():
+def Checkin_Sys_Student():
     if(request.form.get('password',"") == 'xueshubu2016'):
         syn_student()
         return jsonify({'success':True})
