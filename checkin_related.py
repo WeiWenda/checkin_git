@@ -13,7 +13,7 @@ checkin_related = Blueprint("checkin_related", __name__, template_folder="templa
 @checkin_related.route('/put/bulk',methods=['GET','POST'])
 def Put_Bulk():
     if request.method=='POST':
-        data = request.form('data')
+        data = request.form.get('data')
         data_json = json.loads(data)
         for r in data_json['rs']:
             g.cursor.execute("""
