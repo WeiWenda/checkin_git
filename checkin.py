@@ -5,7 +5,6 @@ from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash,jsonify, send_from_directory
 import datetime
 from checkin_related import checkin_related
-from backend import syn_sign,syn_student
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -59,4 +58,5 @@ def teardown_request(exception):
 #     return redirect(url_for('show_entries'))
    
 if __name__ == '__main__':
-	app.run(host='0.0.0.0',port=51213)
+	app.run(host='0.0.0.0')
+    # app.run(host='202.117.16.35',port=51213)

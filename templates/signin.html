@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML SYSTEM "about:legacy-compat">
+<html><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta content="IE=8" http-equiv="X-UA-Compatible"/><title>门禁刷卡</title><link href="../static/terminal.css" media="screen" type="text/css" rel="stylesheet"/></head><body><div id="wrap"><div id="left"><div class="banner">西安交通大学学生公寓学生身份识别系统</div><div class="signin-node"></div></div><div id="main"><div id="corner"><div id="msg" class="msg">请刷校园卡</div></div><div class="footer">版权所有：西安交通大学 本系统研发：网络中心开发培训部 服务电话：029-82668827</div></div><div><input id="card_num_input" size="32" name="card_num" type="password"/></div>
+<script src="../static/lib/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#card_num_input').val("");
+        $('#card_num_input').focus();
+    });
+    $('#card_num_input').on('change', function(){
+     $.post('/signin',data={id:$('#card_num_input').val()},function(data){
+        if(data.success==true)
+          alert("刷卡成功！");
+      else
+          alert("发生错误！");
+  });
+     $('#card_num_input').val("");
+ });
+    
+
+</script>
+</div></body></html>

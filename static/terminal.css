@@ -1,0 +1,148 @@
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-image: url("./bg.jpg");
+    background-position: center top;
+    background-repeat: repeat-x repeat-y;
+}
+
+a {
+    text-decoration: none;
+}
+
+#card_num_input {
+    cursor: default;
+    position: absolute;
+    left: -500px;
+    top: -100px;
+    width: 2000px;
+    height: 1000px;
+    background: transparent;
+    border: 0;
+}
+
+#wrap {
+    margin: 0 auto;
+    position: relative;
+    float: none;
+    top: 0px;
+    left: 0px;
+    width: 1024px;
+    height: 768px;
+    text-align: left;
+}
+
+#main {
+    margin-left: 36px;
+    margin-top: 36px;
+    position: relative;
+    float: left;
+    width: 738px;
+    height: 580px;
+    text-align: left;
+    color: white;
+}
+
+#left {
+    margin-left: 24px;
+    margin-top: 36px;
+    position: relative;
+    float: left;
+    width: 200px;
+    color: white;
+}
+
+.signin-node {
+    margin-left: 24px;
+    width: 38px;
+    font-size: 36px;
+    float: left;
+}
+
+.banner {
+    margin-left: 24px;
+    width: 28px;
+    font-size: 22px;
+    font-weight: bold;
+    float: left;
+}
+
+#content-wrap {
+    height: 650px;
+}
+
+#corner {
+    padding: 8px;
+    width: 720px;
+    height: 640px;
+    background: #434E6C;
+    -moz-border-radius-bottomleft: 6px;
+    -moz-border-radius-bottomright: 6px;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-topright: 6px;
+}
+
+#corner img {
+    margin-left: 12px;
+    border: 0;
+    position: relative;
+    float: left;
+}
+
+.msg {
+    position: relative;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    font-size: 64px;
+    text-align: center;
+    -moz-border-radius-bottomleft: 6px;
+    -moz-border-radius-bottomright: 6px;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-topright: 6px;
+    background: #FCFF65;
+    color: green;
+}
+
+#corner table {
+    width: 296px;
+    position: relative;
+    float: left;
+    margin: 2px 0 0 0;
+    border-collapse: collapse;
+    color: white;
+}
+
+#corner table td {
+    padding: 8px;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+#corner table th {
+    padding: 8px;
+    font-size: 16px;
+    text-align: left;
+    font-weight: bold;
+}
+
+#corner table thead {
+    font-weight: bold;
+    background-color: #BBBBBB;
+}
+
+.footer {
+    text-align: right;
+    font-size: 14px;
+    margin-top: 20px;
+    border-top: 1px solid #999999;
+    width: 100%;
+}
+
+.error {
+    color: red;
+}

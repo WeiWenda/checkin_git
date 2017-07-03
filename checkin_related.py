@@ -1,33 +1,52 @@
 # -*- coding: utf8 -*-
 import os
+import re
 from flask import Blueprint, render_template, abort,Flask, request, session, g, redirect, url_for,flash,jsonify,request 
 from datetime import datetime
 import MySQLdb as mysql
-from backend import syn_sign,syn_student
+from backend import syn_student,insert_sign_event
 import sys
 import json
 reload(sys)
 sys.setdefaultencoding('utf8')
 checkin_related = Blueprint("checkin_related", __name__, template_folder="templates")
-
-@checkin_related.route('/put/bulk',methods=['GET','POST'])
-def Put_Bulk():
-    if request.method=='POST':
-        if(request.form.get('password',"") == 'xueshubu2016'):
-            data = request.form.get('rs')
-            data = json.loads(data)
-            for r in data:
-                g.cursor.execute("""
-                    insert into check_in 
-                      (person_name, id_num, node_name, sign_date)
-                      values ("%s","%s","%s","%s")""" % (r['person_name'],r['id_num'],r['node_name'],r['sign_date']))
-            g.db.commit()
-            syn_sign()
-            return "ok!"
-        else:
-            return "false!"
+@checkin_related.route('/signin',methods=['GET','POST'])
+def Sign_In():
+    if request.method == 'GET':
+        return render_template('signin.html')
     else:
-        return "404"
+        card_id = request.form.get('id',"")
+        now = datetime.now()
+        if  re.match(r'^[0-9]{10}$',card_id):
+            g.cursor.execute("""
+                    insert into check_in_new
+                      (stu_id, sign_date)
+                      values ("%s","%s")""" % (card_id,now.strftime("%Y-%m-%d %H:%M:%S")))
+            g.db.commit()
+            insert_sign_event(card_id,now,g.db,g.cursor)
+            # syn_sign()
+            return jsonify({'success':True})
+        else:
+            return jsonify({'success':False})
+
+# @checkin_related.route('/put/bulk',methods=['GET','POST'])
+# def Put_Bulk():
+#     if request.method=='POST':
+#         if(request.form.get('password',"") == 'xueshubu2016'):
+#             data = request.form.get('rs')
+#             data = json.loads(data)
+#             for r in data:
+#                 g.cursor.execute("""
+#                     insert into check_in 
+#                       (person_name, id_num, node_name, sign_date)
+#                       values ("%s","%s","%s","%s")""" % (r['person_name'],r['id_num'],r['node_name'],r['sign_date']))
+#             g.db.commit()
+#             syn_sign()
+#             return "ok!"
+#         else:
+#             return "false!"
+#     else:
+#         return "404"
 
 @checkin_related.route('/get/new')
 def Get_New():

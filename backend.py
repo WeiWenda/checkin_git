@@ -18,137 +18,83 @@ def syn_student():
                %(int(row[0]),row[1],int(row[2]),int(row[3]) ))
             db.commit()
 
-def compute_sign_count(stu_id,signs,db,cursor):
-    dateMap=dict()
-    for sign_date in signs:
-        today = datetime.strptime(sign_date.date().isoformat(),'%Y-%m-%d')
-        if(today in dateMap):
-            dateMap[today].append(sign_date)
-        else:
-            dateMap[today]=[sign_date]
+def compute_sign_count(stu_id,today,cursor): 
     loose=10
-    eat=30
+    eat = 0
     time1=timedelta(minutes=30, hours=8)+timedelta(minutes=loose+1)
     time2=timedelta(minutes=40, hours=11)-timedelta(minutes=loose+1)
     time3=timedelta(minutes=20, hours=14)+timedelta(minutes=loose+1)
     time4=timedelta(minutes=40, hours=17)-timedelta(minutes=loose+1)
     time5=timedelta(minutes=0, hours=20)+timedelta(minutes=loose+1)
     time6=timedelta(minutes=10, hours=21)-timedelta(minutes=loose+1)
-    for (today,list_sign_date) in dateMap.items():
-        dict_sign_date=dict()
-        for sign_date in list_sign_date:
-            if(sign_date < today+time1):
-                if('8:30' in dict_sign_date):
-                    dict_sign_date['8:30'][0]=min(dict_sign_date['8:30'][0],sign_date)
-                else:
-                    dict_sign_date['8:30']=[sign_date]
-            if(sign_date > today+time2 and sign_date < today+time3):
-                if('11:40-14:20' not in dict_sign_date):
-                    dict_sign_date['11:40-14:20']=[sign_date]
-                elif((sign_date-dict_sign_date['11:40-14:20'][0]).seconds>eat*60):
-                    dict_sign_date['11:40-14:20'].append(sign_date)
-            if(sign_date > today+time4 and sign_date < today+time5):
-                if('17:40-20:00' not in dict_sign_date):
-                    dict_sign_date['17:40-20:00']=[sign_date]
-                elif((sign_date-dict_sign_date['17:40-20:00'][0]).seconds>eat*60):
-                    dict_sign_date['17:40-20:00'].append(sign_date)
-            if(sign_date > today+time6):
-                if('21:10' in dict_sign_date):
-                    dict_sign_date['21:10'][0]=min(dict_sign_date['21:10'][0],sign_date)
-                else:
-                    dict_sign_date['21:10']=[sign_date]
-        if(len(dict_sign_date.get('17:40-20:00',[today+time4]))>1 and '21:10' in dict_sign_date and
-            (dict_sign_date['21:10'][0]-dict_sign_date['17:40-20:00'][1]).seconds<3*3600):
-            dict_sign_date.pop('21:10')
-        if(len(dict_sign_date.get('11:40-14:20',[today+time4]))>2):
-            del dict_sign_date['11:40-14:20'][2:]
-        if(len(dict_sign_date.get('17:40-20:00',[today+time2]))>2):
-            del dict_sign_date['17:40-20:00'][2:]
-        sign_count_tmp=0
-        for (duration,value) in dict_sign_date.items():
-            sign_count_tmp+=len(value)
-        cursor.execute('insert into lab_sign_count(stu_id,sign_count,sign_date) values(%d,%d,"%s")'%(stu_id,sign_count_tmp,today.isoformat(" ")))
-        db.commit()
-        # print(today)
-        # print (dict_sign_date)
-def insert_sign_event(stu_id,max_date,db,cursor):
-    cursor.execute(''' select DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE),
-            (case when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '08:30:00' then 1 
-                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '11:40:00' and time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '08:30:00' then 2
-                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '14:20:00' AND time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '11:40:00' then 1
-                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '17:40:00' and time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '14:20:00' then 2
-                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '20:00:00' and time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '17:40:00' then 1
-                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) < '21:10:00' and time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '20:00:00' then 2
-                when time(DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)) > '21:10:00' then 3 else 1
-                     end) as sign_type 
-                        from check_in as c,lab_student as s,lab_group as g
-                        where c.sign_date > "%s" and c.id_num = "%d"
-                        and s.stu_id = c.id_num AND
-                            g.group_id = s.group_id 
-                        order by sign_date '''%(max_date.isoformat(),stu_id))
-    signs = cursor.fetchall()
-    last_sign_date = datetime.strptime(max_date.isoformat(),'%Y-%m-%d')
-    color_collection=['#5DCB77','#DA5F44']
-    for sign in signs:
-        color = sign[1]
-        if(int(sign[1])==3):
-            if((sign[0]-last_sign_date).seconds<3*3600):
-                color=2
+    cursor.execute('''select sign_date from check_in_new where stu_id = "%s" and sign_date > "%s" and sign_date <= "%s" '''%(stu_id,today.isoformat(" "),datetime.now().isoformat(" ")))
+    list_sign_date =[row[0] for row in  cursor.fetchall()]
+    dict_sign_date=dict()
+    for sign_date in list_sign_date:
+        if(sign_date < today+time1):
+            if('8:30' in dict_sign_date):
+                dict_sign_date['8:30'][0]=min(dict_sign_date['8:30'][0],sign_date)
             else:
-                color=1
-        if((sign[0]-last_sign_date).seconds< 30*60):
-            continue
-        cursor.execute('insert into lab_event(start,color,stu_id) values("%s","%s",%d)'%(sign[0].isoformat(" "),color_collection[int(color)-1],stu_id))
-        db.commit()
-        last_sign_date=sign[0]
+                dict_sign_date['8:30']=[sign_date]
+        if(sign_date > today+time2 and sign_date < today+time3):
+            if('11:40-14:20' not in dict_sign_date):
+                dict_sign_date['11:40-14:20']=[sign_date]
+            elif((sign_date-dict_sign_date['11:40-14:20'][0]).seconds>eat*60):
+                dict_sign_date['11:40-14:20'].append(sign_date)
+        if(sign_date > today+time4 and sign_date < today+time5):
+            if('17:40-20:00' not in dict_sign_date):
+                dict_sign_date['17:40-20:00']=[sign_date]
+            elif((sign_date-dict_sign_date['17:40-20:00'][0]).seconds>eat*60):
+                dict_sign_date['17:40-20:00'].append(sign_date)
+        if(sign_date > today+time6):
+            if('21:10' in dict_sign_date):
+                dict_sign_date['21:10'][0]=min(dict_sign_date['21:10'][0],sign_date)
+            else:
+                dict_sign_date['21:10']=[sign_date]
+    if(len(dict_sign_date.get('17:40-20:00',[today+time4]))>1 and '21:10' in dict_sign_date and
+        (dict_sign_date['21:10'][0]-dict_sign_date['17:40-20:00'][1]).seconds<3*3600):
+        dict_sign_date.pop('21:10')
+    if(len(dict_sign_date.get('11:40-14:20',[today+time4]))>2):
+        del dict_sign_date['11:40-14:20'][2:]
+    if(len(dict_sign_date.get('17:40-20:00',[today+time2]))>2):
+        del dict_sign_date['17:40-20:00'][2:]
+    sign_count_tmp=0
+    for (duration,value) in dict_sign_date.items():
+        sign_count_tmp+=len(value)
+    return sign_count_tmp
 
-def syn_sign():
-    db = mysql.connect(host='202.117.16.247',user='vivid',passwd='xjtudlc_PL<KI*()_',db='checkin',charset='utf8')
-    cursor = db.cursor()
-    cursor.execute('select stu_id,stu_name from lab_student')
-    students = [dict(id=row[0], name=row[1]) for row in cursor.fetchall()]
-    #增量计算event和sign_count
-    for student in students:
-        print (student['name'])
-        cursor.execute('select max(sign_date) from lab_sign_count where stu_id = "%d"'%int(student['id']))
-        max_date=cursor.fetchone()[0]
-        if (max_date is None):
-            cursor.execute('select min(sign_date) from check_in where id_num = "%d"'%int(student['id']))
-            max_date = cursor.fetchone()[0]
-            if(max_date is None ):
-                continue
-            #修正为当天零时
-            max_date=max_date.date()
+def insert_sign_event(stu_id,max_date,db,cursor):
+    eat=0
+    former_time = max_date-timedelta(minutes=eat)
+    cursor.execute(''' select c.sign_date,
+            (case when time(c.sign_date) < '08:30:00' then 1 
+                when time(c.sign_date) < '11:40:00' and time(c.sign_date) > '08:30:00' then 2
+                when time(c.sign_date) < '14:20:00' AND time(c.sign_date) > '11:40:00' then 1
+                when time(c.sign_date) < '17:40:00' and time(c.sign_date) > '14:20:00' then 2
+                when time(c.sign_date) < '20:00:00' and time(c.sign_date) > '17:40:00' then 1
+                when time(c.sign_date) < '21:10:00' and time(c.sign_date) > '20:00:00' then 2
+                when time(c.sign_date) > '21:10:00' then 1 else 1
+                     end) as sign_type 
+                        from check_in_new as c
+                        where c.sign_date >= "%s" and c.stu_id = "%s"
+                '''%(former_time.strftime("%Y-%m-%d %H:%M:%S"),stu_id))
+    signs = cursor.fetchall()
+    if len(signs) > 1:
+        return 
+    else:
+        sign = signs[0]
+        color_collection=['#5DCB77','#DA5F44']
+        color = sign[1]
+        today = datetime.strptime(max_date.date().isoformat(),'%Y-%m-%d')
+        cursor.execute('insert into lab_event_new(start,color,stu_id) values("%s","%s","%s")'%(sign[0].isoformat(" "),color_collection[int(color)-1],stu_id))
+        db.commit()
+        cursor.execute('select sign_count from lab_sign_count_new where stu_id = "%s" and sign_date = "%s"'%(stu_id,today.isoformat(" ")))
+        result = cursor.fetchone()
+        if result:
+            if(int(result[0])==6):
+                return
+            cursor.execute('update lab_sign_count_new set sign_count = %d where sign_date = "%s" and stu_id = "%s"'%(compute_sign_count(stu_id,today,cursor),today.isoformat(" "),stu_id))
+            db.commit()
         else:
-            #增量，修正为下一天
-            tmp=max_date+timedelta(days=1)
-            max_date=tmp.date()
-            
-        cursor.execute('''select DATE_SUB(c.sign_date,INTERVAL g.fix_minute MINUTE)  from check_in as c,lab_student as s,lab_group as g
-            where c.id_num = "%d" and 
-                s.stu_id = c.id_num AND
-                g.group_id = s.group_id and
-                sign_date> "%s" order by sign_date
-            '''%(int(student['id']),max_date.isoformat()))
-        signs = [row[0] for row in cursor.fetchall()]
-        compute_sign_count(int(student['id']),signs,db,cursor)
-        
-        
-        cursor.execute('select max(start) from lab_event where stu_id = "%d"'%int(student['id']))
-        max_date=cursor.fetchone()[0]
-        if (max_date is None):
-            cursor.execute('select min(sign_date) from check_in where id_num = "%d"'%int(student['id']))
-            max_date = cursor.fetchone()[0]
-            if(max_date is None ):
-                continue
-            #修正为当天零时
-            max_date=max_date.date()
-        else:
-            #增量，修正为下一天
-            tmp=max_date+timedelta(days=1)
-            max_date=tmp.date()
-        insert_sign_event(int(student['id']),max_date,db,cursor)
-    #     figureout_valid(signs)
-    
-    
-        
+            cursor.execute('insert into lab_sign_count_new(stu_id,sign_count,sign_date) values("%s",%d,"%s")'%(stu_id,1,today.isoformat(" ")))
+            db.commit()
