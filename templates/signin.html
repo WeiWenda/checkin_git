@@ -9,10 +9,11 @@
     });
     $('#card_num_input').on('change', function(){
      $.post('/signin',data={id:$('#card_num_input').val()},function(data){
-        if(data.success==true)
-          alert("刷卡成功！");
-      else
-          alert("发生错误！");
+      if(data.success){
+        alert(data.name+""+data.message);
+      }else{
+        alert(data.message);
+      }     
   });
      $('#card_num_input').val("");
  });

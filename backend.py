@@ -27,7 +27,7 @@ def compute_sign_count(stu_id,today,cursor):
     time4=timedelta(minutes=40, hours=17)-timedelta(minutes=loose+1)
     time5=timedelta(minutes=0, hours=20)+timedelta(minutes=loose+1)
     time6=timedelta(minutes=10, hours=21)-timedelta(minutes=loose+1)
-    cursor.execute('''select sign_date from check_in_new where stu_id = "%s" and sign_date > "%s" and sign_date <= "%s" '''%(stu_id,today.isoformat(" "),datetime.now().isoformat(" ")))
+    cursor.execute('''select sign_date from check_in where stu_id = "%s" and sign_date > "%s" and sign_date <= "%s" '''%(stu_id,today.isoformat(" "),datetime.now().isoformat(" ")))
     list_sign_date =[row[0] for row in  cursor.fetchall()]
     dict_sign_date=dict()
     for sign_date in list_sign_date:
@@ -64,37 +64,48 @@ def compute_sign_count(stu_id,today,cursor):
     return sign_count_tmp
 
 def insert_sign_event(stu_id,max_date,db,cursor):
-    eat=0
+    eat=30
     former_time = max_date-timedelta(minutes=eat)
-    cursor.execute(''' select c.sign_date,
+    cursor.execute(''' select c.sign_date
+                        from check_in as c
+                        where c.sign_date >= "%s" and c.stu_id = "%s"
+                '''%(former_time.strftime("%Y-%m-%d %H:%M:%S"),stu_id))
+    if len(cursor.fetchall()) > 0:
+        return '30分钟内重复刷卡无效！'
+    else:
+        cursor.execute("""
+                    insert into check_in
+                      (stu_id, sign_date)
+                      values ("%s","%s")""" % (stu_id,max_date.strftime("%Y-%m-%d %H:%M:%S")))
+        db.commit()
+        cursor.execute(''' select c.sign_date,
             (case when time(c.sign_date) < '08:30:00' then 1 
                 when time(c.sign_date) < '11:40:00' and time(c.sign_date) > '08:30:00' then 2
                 when time(c.sign_date) < '14:20:00' AND time(c.sign_date) > '11:40:00' then 1
-                when time(c.sign_date) < '17:40:00' and time(c.sign_date) > '14:20:00' then 2
+                when time(c.sign_date) < '17:40:00' and time(c.sign_date) > '14:20:00' then 1
                 when time(c.sign_date) < '20:00:00' and time(c.sign_date) > '17:40:00' then 1
                 when time(c.sign_date) < '21:10:00' and time(c.sign_date) > '20:00:00' then 2
                 when time(c.sign_date) > '21:10:00' then 1 else 1
                      end) as sign_type 
-                        from check_in_new as c
+                        from check_in as c
                         where c.sign_date >= "%s" and c.stu_id = "%s"
-                '''%(former_time.strftime("%Y-%m-%d %H:%M:%S"),stu_id))
-    signs = cursor.fetchall()
-    if len(signs) > 1:
-        return 
-    else:
-        sign = signs[0]
+                '''%(max_date.strftime("%Y-%m-%d %H:%M:%S"),stu_id))
+        sign = cursor.fetchall()[0]
         color_collection=['#5DCB77','#DA5F44']
         color = sign[1]
         today = datetime.strptime(max_date.date().isoformat(),'%Y-%m-%d')
-        cursor.execute('insert into lab_event_new(start,color,stu_id) values("%s","%s","%s")'%(sign[0].isoformat(" "),color_collection[int(color)-1],stu_id))
+        cursor.execute('insert into lab_event(start,color,stu_id) values("%s","%s","%s")'%(sign[0].isoformat(" "),color_collection[int(color)-1],stu_id))
         db.commit()
-        cursor.execute('select sign_count from lab_sign_count_new where stu_id = "%s" and sign_date = "%s"'%(stu_id,today.isoformat(" ")))
+        if color == 2:
+            return '你迟到了'
+        cursor.execute('select sign_count from lab_sign_count where stu_id = "%s" and sign_date = "%s"'%(stu_id,today.isoformat(" ")))
         result = cursor.fetchone()
         if result:
             if(int(result[0])==6):
-                return
-            cursor.execute('update lab_sign_count_new set sign_count = %d where sign_date = "%s" and stu_id = "%s"'%(compute_sign_count(stu_id,today,cursor),today.isoformat(" "),stu_id))
+                return '你今天已经满勤了，干的漂亮！'
+            cursor.execute('update lab_sign_count set sign_count = %d where sign_date = "%s" and stu_id = "%s"'%(compute_sign_count(stu_id,today,cursor),today.isoformat(" "),stu_id))
             db.commit()
         else:
-            cursor.execute('insert into lab_sign_count_new(stu_id,sign_count,sign_date) values("%s",%d,"%s")'%(stu_id,1,today.isoformat(" ")))
+            cursor.execute('insert into lab_sign_count(stu_id,sign_count,sign_date) values("%s",%d,"%s")'%(stu_id,1,today.isoformat(" ")))
             db.commit()
+        return  '打卡有效'

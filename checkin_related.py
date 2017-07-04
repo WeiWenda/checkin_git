@@ -17,17 +17,14 @@ def Sign_In():
     else:
         card_id = request.form.get('id',"")
         now = datetime.now()
-        if  re.match(r'^[0-9]{10}$',card_id):
-            g.cursor.execute("""
-                    insert into check_in_new
-                      (stu_id, sign_date)
-                      values ("%s","%s")""" % (card_id,now.strftime("%Y-%m-%d %H:%M:%S")))
-            g.db.commit()
-            insert_sign_event(card_id,now,g.db,g.cursor)
+        g.cursor.execute('select stu_name from lab_student where stu_id = "%s" '%(card_id))
+        result = g.cursor.fetchone()
+        if  result and re.match(r'^[0-9]{10}$',card_id):
+            msg = insert_sign_event(card_id,now,g.db,g.cursor)
             # syn_sign()
-            return jsonify({'success':True})
+            return jsonify({'message':msg,'name':result[0],'success':True})
         else:
-            return jsonify({'success':False})
+            return jsonify({'message':'卡号有误，请重新登记！','success':False})
 
 # @checkin_related.route('/put/bulk',methods=['GET','POST'])
 # def Put_Bulk():
