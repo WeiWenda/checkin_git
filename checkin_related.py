@@ -20,13 +20,13 @@ def Sign_In():
         g.cursor.execute('select stu_name,id from lab_student where stu_id = "%s" '%(card_id))
         result = g.cursor.fetchone()
         if  result and re.match(r'^[0-9]{10}$',card_id):
-            msg = insert_sign_event(card_id,now,g.db,g.cursor)
+            msg,success = insert_sign_event(card_id,now,g.db,g.cursor)
             g.cursor.execute('select sign_count from lab_sign_count where stu_id = "%s" and sign_date = "%s"'%(card_id,datetime.strptime(now.date().isoformat(),'%Y-%m-%d').isoformat(" ")))
             time = g.cursor.fetchone()
             num = 0
             if time:
                 num = time[0]
-            return jsonify({'message':msg,'num':num,'name':result[0],'id':result[1],'success':True})
+            return jsonify({'message':msg,'num':num,'name':result[0],'id':result[1],'success':success})
         else:
             return jsonify({'message':'卡号有误，请重新登记！','success':False})
 

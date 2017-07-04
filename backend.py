@@ -71,7 +71,7 @@ def insert_sign_event(stu_id,max_date,db,cursor):
                         where c.sign_date >= "%s" and c.stu_id = "%s"
                 '''%(former_time.strftime("%Y-%m-%d %H:%M:%S"),stu_id))
     if len(cursor.fetchall()) > 0:
-        return '重复刷卡无效！'
+        return '重复刷卡无效！',False
     else:
         cursor.execute("""
                     insert into check_in
@@ -97,15 +97,15 @@ def insert_sign_event(stu_id,max_date,db,cursor):
         cursor.execute('insert into lab_event(start,color,stu_id) values("%s","%s","%s")'%(sign[0].isoformat(" "),color_collection[int(color)-1],stu_id))
         db.commit()
         if color == 2:
-            return '未按时打卡！'
+            return '未按时打卡！',False
         cursor.execute('select sign_count from lab_sign_count where stu_id = "%s" and sign_date = "%s"'%(stu_id,today.isoformat(" ")))
         result = cursor.fetchone()
         if result:
             if(int(result[0])==6):
-                return '已满勤，干的漂亮！'
+                return '已满勤，干的漂亮！',True
             cursor.execute('update lab_sign_count set sign_count = %d where sign_date = "%s" and stu_id = "%s"'%(compute_sign_count(stu_id,today,cursor),today.isoformat(" "),stu_id))
             db.commit()
         else:
             cursor.execute('insert into lab_sign_count(stu_id,sign_count,sign_date) values("%s",%d,"%s")'%(stu_id,1,today.isoformat(" ")))
             db.commit()
-        return  '打卡有效'
+        return  '打卡有效',True

@@ -16,12 +16,13 @@
    $.post('/signin',data={id:$('#card_num_input').val()},function(data){
     if(data.success){
       $("#msg").attr('class','msg').text(data.message);
-      $('#tac').append($('<tr>').append($("<th>").text('学号')).append($('<td>').text(data.id)));
-      $('#tac').append($('<tr>').append($("<th>").text('姓名')).append($('<td>').text(data.name)));
-      $('#tac').append($('<tr>').append($("<th>").text('今日考勤次数')).append($('<td>').text(data.num)));
     }else{
       $("#msg").attr('class','msg error').text(data.message);
-      // alert(data.message);
+    }
+    if(data.name != undefined){
+       $('#tac').append($('<tr>').append($("<th>").text('学号')).append($('<td>').text(data.id)));
+      $('#tac').append($('<tr>').append($("<th>").text('姓名')).append($('<td>').text(data.name)));
+      $('#tac').append($('<tr>').append($("<th>").text('今日考勤次数')).append($('<td>').text(data.num)));
     }    
     setTimeout(function(){ 
       $("#msg").attr('class','msg').text("请刷校园卡");
