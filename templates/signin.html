@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE HTML SYSTEM "about:legacy-compat">
-<html><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta content="IE=8" http-equiv="X-UA-Compatible"/><title>门禁刷卡</title><link href="../static/terminal.css" media="screen" type="text/css" rel="stylesheet"/></head><body><div id="wrap"><div id="left"><div class="banner">西安交通大学学生公寓学生身份识别系统</div><div class="signin-node"></div></div><div id="main"><div id="corner"><div id="msg" class="msg">请刷校园卡</div></div><div class="footer">版权所有：西安交通大学 本系统研发：网络中心开发培训部 服务电话：029-82668827</div></div><div><input id="card_num_input" size="32" name="card_num" type="password"/></div>
+<html><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta content="IE=8" http-equiv="X-UA-Compatible"/><title>门禁刷卡</title><link href="../static/terminal.css" media="screen" type="text/css" rel="stylesheet"/></head><body><div id="wrap"><div id="left"><div class="banner">陕西省天地网重点实验室考勤系统</div><div class="signin-node"></div></div><div id="main"><div id="corner"><div id="msg" class="msg">请刷校园卡</div><table id = 'tac'></table></div><div id="clock"></div><div class="footer">版权所有：陕西省天地网重点实验室 本系统研发：学术部2016 </div></div><div><input id="card_num_input" size="32" name="card_num" type="password"/></div>
 <script src="../static/lib/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <script type="text/javascript">
-    $(function () {
-        $('#card_num_input').val("");
-        $('#card_num_input').focus();
-    });
-    $('#card_num_input').on('change', function(){
-     $.post('/signin',data={id:$('#card_num_input').val()},function(data){
-      if(data.success){
-        alert(data.name+""+data.message);
-      }else{
-        alert(data.message);
-      }     
+  function displayTime(){
+    var now = new Date(); // 得到当前时间
+    $("#clock").text("系统时间："+now.toLocaleTimeString()); //让elt来显示它
+  }
+  $(function () {
+    $('#card_num_input').val("");
+    $('#card_num_input').focus();
+    setInterval(displayTime,1000); //在1秒后再次执行
   });
-     $('#card_num_input').val("");
+  $('#card_num_input').on('change', function(){
+   $.post('/signin',data={id:$('#card_num_input').val()},function(data){
+    if(data.success){
+      $("#msg").attr('class','msg').text(data.message);
+      $('#tac').append($('<tr>').append($("<th>").text('学号')).append($('<td>').text(data.id)));
+      $('#tac').append($('<tr>').append($("<th>").text('姓名')).append($('<td>').text(data.name)));
+      $('#tac').append($('<tr>').append($("<th>").text('今日考勤次数')).append($('<td>').text(data.num)));
+    }else{
+      $("#msg").attr('class','msg error').text(data.message);
+      // alert(data.message);
+    }    
+    setTimeout(function(){ 
+      $("#msg").attr('class','msg').text("请刷校园卡");
+      $("#tac").empty();
+      },2000); 
+  });
+   $('#card_num_input').val("");
  });
-    
+
 
 </script>
 </div></body></html>

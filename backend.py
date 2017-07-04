@@ -64,14 +64,14 @@ def compute_sign_count(stu_id,today,cursor):
     return sign_count_tmp
 
 def insert_sign_event(stu_id,max_date,db,cursor):
-    eat=30
+    eat=0
     former_time = max_date-timedelta(minutes=eat)
     cursor.execute(''' select c.sign_date
                         from check_in as c
                         where c.sign_date >= "%s" and c.stu_id = "%s"
                 '''%(former_time.strftime("%Y-%m-%d %H:%M:%S"),stu_id))
     if len(cursor.fetchall()) > 0:
-        return '30分钟内重复刷卡无效！'
+        return '重复刷卡无效！'
     else:
         cursor.execute("""
                     insert into check_in
@@ -97,12 +97,12 @@ def insert_sign_event(stu_id,max_date,db,cursor):
         cursor.execute('insert into lab_event(start,color,stu_id) values("%s","%s","%s")'%(sign[0].isoformat(" "),color_collection[int(color)-1],stu_id))
         db.commit()
         if color == 2:
-            return '你迟到了'
+            return '已迟到'
         cursor.execute('select sign_count from lab_sign_count where stu_id = "%s" and sign_date = "%s"'%(stu_id,today.isoformat(" ")))
         result = cursor.fetchone()
         if result:
             if(int(result[0])==6):
-                return '你今天已经满勤了，干的漂亮！'
+                return '已满勤，干的漂亮！'
             cursor.execute('update lab_sign_count set sign_count = %d where sign_date = "%s" and stu_id = "%s"'%(compute_sign_count(stu_id,today,cursor),today.isoformat(" "),stu_id))
             db.commit()
         else:

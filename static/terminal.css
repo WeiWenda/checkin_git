@@ -77,7 +77,7 @@ a {
 #corner {
     padding: 8px;
     width: 720px;
-    height: 640px;
+    height: 540px;
     background: #434E6C;
     -moz-border-radius-bottomleft: 6px;
     -moz-border-radius-bottomright: 6px;
@@ -109,7 +109,7 @@ a {
 }
 
 #corner table {
-    width: 296px;
+    width: 720px;
     position: relative;
     float: left;
     margin: 2px 0 0 0;
@@ -119,13 +119,13 @@ a {
 
 #corner table td {
     padding: 8px;
-    font-size: 16px;
+    font-size: 40px;
     vertical-align: middle;
 }
 
 #corner table th {
     padding: 8px;
-    font-size: 16px;
+    font-size: 40px;
     text-align: left;
     font-weight: bold;
 }
@@ -146,3 +146,12 @@ a {
 .error {
     color: red;
 }
+
+ #clock {
+    text-align: center;
+    width: 720px;
+    height: 100px;
+    background: #434E6C;
+    font: bold 40pt sans;
+    padding: 10px;
+   }
