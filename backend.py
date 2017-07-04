@@ -97,7 +97,7 @@ def insert_sign_event(stu_id,max_date,db,cursor):
         cursor.execute('insert into lab_event(start,color,stu_id) values("%s","%s","%s")'%(sign[0].isoformat(" "),color_collection[int(color)-1],stu_id))
         db.commit()
         if color == 2:
-            return '已迟到'
+            return '未按时打卡！'
         cursor.execute('select sign_count from lab_sign_count where stu_id = "%s" and sign_date = "%s"'%(stu_id,today.isoformat(" ")))
         result = cursor.fetchone()
         if result:
