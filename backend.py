@@ -64,7 +64,7 @@ def compute_sign_count(stu_id,today,cursor):
     return sign_count_tmp
 
 def insert_sign_event(stu_id,max_date,db,cursor):
-    eat=0
+    eat=30
     former_time = max_date-timedelta(minutes=eat)
     cursor.execute(''' select c.sign_date
                         from check_in as c
@@ -82,7 +82,7 @@ def insert_sign_event(stu_id,max_date,db,cursor):
             (case when time(c.sign_date) < '08:30:00' then 1 
                 when time(c.sign_date) < '11:40:00' and time(c.sign_date) > '08:30:00' then 2
                 when time(c.sign_date) < '14:20:00' AND time(c.sign_date) > '11:40:00' then 1
-                when time(c.sign_date) < '17:40:00' and time(c.sign_date) > '14:20:00' then 1
+                when time(c.sign_date) < '17:40:00' and time(c.sign_date) > '14:20:00' then 2
                 when time(c.sign_date) < '20:00:00' and time(c.sign_date) > '17:40:00' then 1
                 when time(c.sign_date) < '21:10:00' and time(c.sign_date) > '20:00:00' then 2
                 when time(c.sign_date) > '21:10:00' then 1 else 1
