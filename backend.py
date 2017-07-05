@@ -97,6 +97,6 @@ def insert_sign_event(stu_id,max_date,db,cursor):
             cursor.execute('update lab_sign_count set sign_count = %d where sign_date = "%s" and stu_id = "%s"'%(compute_sign_count(stu_id,today,cursor),today.isoformat(" "),stu_id))
             db.commit()
         else:
-            cursor.execute('insert into lab_sign_count(stu_id,sign_count,sign_date) values("%s",%d,"%s")'%(stu_id,1,today.isoformat(" ")))
+            cursor.execute('insert into lab_sign_count(stu_id,sign_count,sign_date) values("%s",%d,"%s")'%(stu_id,compute_sign_count(stu_id,today,cursor),today.isoformat(" ")))
             db.commit()
         return  '打卡有效',True
