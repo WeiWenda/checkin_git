@@ -3,6 +3,14 @@ import MySQLdb as mysql
 import calendar
 from datetime import datetime
 from datetime import timedelta
+eat = 30
+loose=10
+time1=timedelta(minutes=30, hours=8)+timedelta(minutes=loose+1)
+time2=timedelta(minutes=40, hours=11)-timedelta(minutes=loose+1)
+time3=timedelta(minutes=20, hours=14)+timedelta(minutes=loose+1)
+time4=timedelta(minutes=40, hours=17)-timedelta(minutes=loose+1)
+time5=timedelta(minutes=0, hours=20)+timedelta(minutes=loose+1)
+time6=timedelta(minutes=10, hours=21)-timedelta(minutes=loose+1)
 def syn_student():
     db = mysql.connect(host='202.117.16.247',user='vivid',passwd='xjtudlc_PL<KI*()_',db='checkin',charset='utf8')
     cursor = db.cursor()
@@ -18,15 +26,7 @@ def syn_student():
                %(int(row[0]),row[1],int(row[2]),int(row[3]) ))
             db.commit()
 
-def compute_sign_count(stu_id,today,cursor): 
-    loose=10
-    eat = 0
-    time1=timedelta(minutes=30, hours=8)+timedelta(minutes=loose+1)
-    time2=timedelta(minutes=40, hours=11)-timedelta(minutes=loose+1)
-    time3=timedelta(minutes=20, hours=14)+timedelta(minutes=loose+1)
-    time4=timedelta(minutes=40, hours=17)-timedelta(minutes=loose+1)
-    time5=timedelta(minutes=0, hours=20)+timedelta(minutes=loose+1)
-    time6=timedelta(minutes=10, hours=21)-timedelta(minutes=loose+1)
+def compute_sign_count(stu_id,today,cursor):  
     cursor.execute('''select sign_date from check_in where stu_id = "%s" and sign_date > "%s" and sign_date <= "%s" '''%(stu_id,today.isoformat(" "),datetime.now().isoformat(" ")))
     list_sign_date =[row[0] for row in  cursor.fetchall()]
     dict_sign_date=dict()
@@ -64,7 +64,6 @@ def compute_sign_count(stu_id,today,cursor):
     return sign_count_tmp
 
 def insert_sign_event(stu_id,max_date,db,cursor):
-    eat=30
     former_time = max_date-timedelta(minutes=eat)
     cursor.execute(''' select c.sign_date
                         from check_in as c
@@ -78,24 +77,16 @@ def insert_sign_event(stu_id,max_date,db,cursor):
                       (stu_id, sign_date)
                       values ("%s","%s")""" % (stu_id,max_date.strftime("%Y-%m-%d %H:%M:%S")))
         db.commit()
-        cursor.execute(''' select c.sign_date,
-            (case when time(c.sign_date) < '08:30:00' then 1 
-                when time(c.sign_date) < '11:40:00' and time(c.sign_date) > '08:30:00' then 2
-                when time(c.sign_date) < '14:20:00' AND time(c.sign_date) > '11:40:00' then 1
-                when time(c.sign_date) < '17:40:00' and time(c.sign_date) > '14:20:00' then 2
-                when time(c.sign_date) < '20:00:00' and time(c.sign_date) > '17:40:00' then 1
-                when time(c.sign_date) < '21:10:00' and time(c.sign_date) > '20:00:00' then 2
-                when time(c.sign_date) > '21:10:00' then 1 else 1
-                     end) as sign_type 
-                        from check_in as c
-                        where c.sign_date >= "%s" and c.stu_id = "%s"
-                '''%(max_date.strftime("%Y-%m-%d %H:%M:%S"),stu_id))
-        sign = cursor.fetchall()[0]
-        color_collection=['#5DCB77','#DA5F44']
-        color = sign[1]
+
         today = datetime.strptime(max_date.date().isoformat(),'%Y-%m-%d')
-        cursor.execute('insert into lab_event(start,color,stu_id) values("%s","%s","%s")'%(sign[0].isoformat(" "),color_collection[int(color)-1],stu_id))
+        color = 2
+        if max_date < today+time1 or (max_date > today+time2 and max_date < today+time3) or (max_date > today+time4 and max_date < today+time5) or max_date > today+time6: 
+            color =1 
+        sign = max_date
+        color_collection=['#5DCB77','#DA5F44']   
+        cursor.execute('insert into lab_event(start,color,stu_id) values("%s","%s","%s")'%(sign.isoformat(" "),color_collection[int(color)-1],stu_id))
         db.commit()
+
         if color == 2:
             return '未按时打卡！',False
         cursor.execute('select sign_count from lab_sign_count where stu_id = "%s" and sign_date = "%s"'%(stu_id,today.isoformat(" ")))
