@@ -8,6 +8,7 @@ from backend import syn_student,insert_sign_event
 import sys
 import json
 reload(sys)
+white_list=['202.117.54.50','202.117.10.54','202.117.16.34']
 sys.setdefaultencoding('utf8')
 checkin_related = Blueprint("checkin_related", __name__, template_folder="templates")
 @checkin_related.route('/signin',methods=['GET','POST'])
@@ -16,9 +17,8 @@ def Sign_In():
         return render_template('signin.html')
     else:
         rip = request.headers['x-forwarded-for']
-        if(rip == '202.117.54.85'):
-            return jsonify({'message':'请在指定机器打卡','success':False})
-        print(rip)
+        if rip not in white_list:
+            return jsonify({'message':'请在指定机器打卡!','success':False})
       #  print(request.remote_addr)
         card_id = request.form.get('id',"")
         now = datetime.now()
