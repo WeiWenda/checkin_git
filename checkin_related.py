@@ -15,8 +15,11 @@ def Sign_In():
     if request.method == 'GET':
         return render_template('signin.html')
     else:
-        print(request.headers['x-forwarded-for'])
-        print(request.remote_addr)
+        rip = request.headers['x-forwarded-for']
+        if(rip == '202.117.54.85'):
+            return jsonify({'message':'请在指定机器打卡','success':False})
+        print(rip)
+      #  print(request.remote_addr)
         card_id = request.form.get('id',"")
         now = datetime.now()
         g.cursor.execute('select stu_name,id from lab_student where stu_id = "%s" '%(card_id))
