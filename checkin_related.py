@@ -8,7 +8,7 @@ from backend import syn_student,insert_sign_event
 import sys
 import json
 reload(sys)
-white_list=['202.117.54.50','202.117.10.54','202.117.16.34','202.117.15.92']
+white_list=['202.117.54.50','202.117.10.54','202.117.16.34','202.117.15.85']
 sys.setdefaultencoding('utf8')
 checkin_related = Blueprint("checkin_related", __name__, template_folder="templates")
 @checkin_related.route('/signin',methods=['GET','POST'])
