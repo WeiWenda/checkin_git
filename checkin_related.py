@@ -8,7 +8,7 @@ from backend import syn_student,insert_sign_event
 import sys
 import json
 reload(sys)
-white_list=['202.117.54.50','202.117.10.54','202.117.16.34']
+white_list=['202.117.54.50','202.117.10.54','202.117.16.34','202.117.15.92']
 sys.setdefaultencoding('utf8')
 checkin_related = Blueprint("checkin_related", __name__, template_folder="templates")
 @checkin_related.route('/signin',methods=['GET','POST'])
@@ -22,6 +22,7 @@ def Sign_In():
       #  print(request.remote_addr)
         card_id = request.form.get('id',"")
         now = datetime.now()
+         
         g.cursor.execute('select stu_name,id from lab_student where stu_id = "%s" '%(card_id))
         result = g.cursor.fetchone()
         if  result and re.match(r'^[0-9]{10}$',card_id):

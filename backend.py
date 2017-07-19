@@ -46,7 +46,7 @@ def compute_sign_count(stu_id,today,cursor,rip,time1,time2,time3,time4,time5,tim
             else:
                 dict_sign_date['21:10']=[sign_date]
     if rip == '202.117.16.34':
-        if(len(dict_sign_date.get('17:40-20:00',[today+time4]))>1 and '21:40' in dict_sign_date and
+        if(len(dict_sign_date.get('17:40-20:00',[today+time4]))>1 and '21:10' in dict_sign_date and
             (dict_sign_date['21:10'][0]-dict_sign_date['17:40-20:00'][1]).seconds<3.5*3600):
             dict_sign_date.pop('21:10')
     else:
